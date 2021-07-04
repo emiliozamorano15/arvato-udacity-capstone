@@ -16,7 +16,7 @@ def find_cat_cols(df):
 
     return cat_cols
 
-    
+
 def find_binary_cols(df):
     '''
     Function to find the names numerical columns with binary (1/0) values
@@ -65,6 +65,33 @@ def clean_data(df, drop_rows = [], drop_cols = []):
     clean_df['OST_WEST_KZ'] = pd.to_numeric(clean_df['OST_WEST_KZ'], errors = 'coerce')
 
     return clean_df
+
+
+def scree_plot(pca):
+    """
+    Function to make a scree plot out of a PCA object
+    
+    INPUT
+    pca: PCA fitted object
+
+    OUTPUT
+    scree plot
+    """
+    import matplotlib.pyplot as plt
+
+    num_components = len(pca.explained_variance_ratio_)
+    ind = np.arange(num_components)
+    vals = pca.explained_variance_ratio_
+    cumvals = np.cumsum(vals)
+
+    fig = plt.figure(figsize=(12,6))
+    ax = plt.subplot()
+    ax.bar(ind, vals)
+    ax.plot(ind, cumvals)
+
+    plt.xlabel('No. of Components')
+    plt.ylabel('Cum. explained variance')
+    plt.title('Scree plot PCA')
 
 if __name__ == '__main__':
     pass
