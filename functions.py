@@ -79,8 +79,8 @@ def scree_plot(pca):
     """
     import matplotlib.pyplot as plt
 
-    num_components = len(pca.explained_variance_ratio_)
-    ind = np.arange(num_components)
+    nc = len(pca.explained_variance_ratio_)
+    ind = np.arange(nc)
     vals = pca.explained_variance_ratio_
     cumvals = np.cumsum(vals)
 
@@ -92,6 +92,24 @@ def scree_plot(pca):
     plt.xlabel('No. of Components')
     plt.ylabel('Cum. explained variance')
     plt.title('Scree plot PCA')
+
+def map_component_to_features(pca, component, column_names):
+    """
+    Returns weights of features for a selected component.
+    
+    Input:
+    pca - fitted PCA object
+    component - PCA component of interest
+    column_names - list of original feature names
+    
+    Output:
+    df_features - sorted DataFrame with feature weigths
+    """
+    
+    weights_array = pca.components_[component]
+    df_features = pd.DataFrame(weights_array, index = column_names, columns=['weight'])
+    return df_features.sort_values(by='weight', ascending=False).round(2)
+
 
 if __name__ == '__main__':
     pass
