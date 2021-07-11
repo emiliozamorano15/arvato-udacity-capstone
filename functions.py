@@ -93,22 +93,33 @@ def scree_plot(pca):
     plt.ylabel('Cum. explained variance')
     plt.title('Scree plot PCA')
 
-def map_component_to_features(pca, component, column_names):
+def get_cluster_centers(cluster_pipeline, num_cols, col_names):
     """
-    Returns weights of features for a selected component.
+    Function inverse transform pca components. 
     
-    Input:
-    pca - fitted PCA object
-    component - PCA component of interest
-    column_names - list of original feature names
-    
-    Output:
-    df_features - sorted DataFrame with feature weigths
+    INPUT:
+        cluster: object of cluster_pipeline
+        num_cols: list of numerical attributes which were rescaled
+        col_names: names of all columns after Column Transformer operation
+        
+        
+    OUTPUT:
+        df (DataFrame): DataFrame of cluster_centers with their attributes values
+        
     """
-    
-    weights_array = pca.components_[component]
-    df_features = pd.DataFrame(weights_array, index = column_names, columns=['weight'])
-    return df_features.sort_values(by='weight', ascending=False).round(2)
+
+    pca_components = cluster_pipeline.named_steps['reduction']
+    kmeans = cluster_pipeline.named_steps['clustering']
+    transformer =  cluster_pipeline.named_steps['transform']
+
+    centers = pca_components.inverse_transform(kmeans.cluster_centers_)
+    df = pd.DataFrame(centers, columns = col_names)
+
+    num_scale = transformer.named_transformers_['num'].named_steps['num_scale']
+
+    df[num_cols] = num_scale.inverse_transform(df[num_cols])
+ 
+    return df
 
 
 if __name__ == '__main__':
