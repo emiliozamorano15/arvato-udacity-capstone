@@ -1,6 +1,38 @@
 import pandas as pd
 import numpy as np
 
+def missing_dict(df):
+    '''
+    Function to build a dictionary of indicators of missing information per feature
+
+    INPUT:
+    df: pandas dataframe with features, description, and values that mean "unknown"
+    
+    OUPUT:
+    missing_dict: dictionary of values for "unkwon" per feature
+    '''
+
+    unknown_values = []
+    for val in df.Value:
+        ## evaluate whether missing 'value' is an integer (one digit)
+        if isinstance(val, int):
+            unknown_values.append([val])
+        ## evaluate whether attribute has more than one value (a string object in the dataframe)
+        elif isinstance(val, str):
+            split_list = val.split(',')
+            int_list = [int(x) for x in split_list]
+            unknown_values.append(int_list)
+
+    unknown_dict = {}
+    for attr, value_list in zip(df.Attribute, unknown_values):
+        unknown_dict[attr] = value_list
+
+    unknown_dict['ALTERSKATEGORIE_FEIN'] = [0]
+    unknown_dict['GEBURTSJAHR'] = [0]
+    
+    return unknown_dict
+    
+
 def find_cat_cols(df):
     '''
     Function to find the names of categorical columns
@@ -56,6 +88,10 @@ def clean_data(df, drop_rows = [], drop_cols = []):
     
     if len(drop_rows) > 0:
         clean_df = clean_df.loc[~clean_df.index.isin(drop_rows)]
+
+    ## Cast CAMEO_DEUG_2015 to int
+    clean_df['CAMEO_DEUG_2015'] = clean_df['CAMEO_DEUG_2015'].replace('X',np.nan)
+    clean_df['CAMEO_DEUG_2015'] = clean_df['CAMEO_DEUG_2015'].astype('float')
 
     ## Transform EINGEFUEGT_AM to date format (only year part)
     clean_df['EINGEFUEGT_AM'] = pd.to_datetime(clean_df['EINGEFUEGT_AM'], format = '%Y-%m-%d').dt.year
@@ -120,6 +156,48 @@ def get_cluster_centers(cluster_pipeline, num_cols, col_names):
     df[num_cols] = num_scale.inverse_transform(df[num_cols])
  
     return df
+
+def model_performance(X, y, model, num_samples):
+    """
+    Draw learning curve that shows the validation and training auc_score of an estimator 
+    for varying numbers of training samples.
+    
+    INPUT:
+        X: Predictors Matrix
+        y: Target Vetor
+        estimator: sklearn predictor object with fit and predict methods
+        num_samples: number of training samples to plot
+        
+    """
+    from sklearn.model_selection import learning_curve
+    import matplotlib.pyplot as plt
+
+    train_sizes, train_scores, test_scores = learning_curve(
+        model
+        , X
+        , y
+        , scoring = 'roc_auc'
+        , train_sizes=np.linspace(.1, 1.0, num_samples)
+        )
+
+    train_scores_mean = np.mean(train_scores, axis=1)
+    cv_scores_mean = np.mean(test_scores, axis=1)
+    print("AUC train = {}".format(train_scores_mean[-1].round(2)))
+    print("AUC cv = {}".format(cv_scores_mean[-1].round(2)))
+
+
+    plt.plot(np.linspace(.1, 1.0, num_samples)*100, train_scores_mean,
+             label="Training score")
+    plt.plot(np.linspace(.1, 1.0, num_samples)*100, cv_scores_mean,
+             label="Cross-validation score")
+
+    plt.title("Learning Curves")
+    plt.xlabel("% of training set")
+    plt.ylabel("AUC")
+
+    plt.legend(loc="best")
+    print("")
+    plt.show()
 
 
 if __name__ == '__main__':
