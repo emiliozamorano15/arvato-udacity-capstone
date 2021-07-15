@@ -157,51 +157,6 @@ def get_cluster_centers(cluster_pipeline, num_cols, col_names):
  
     return df
 
-def model_performance(X, y, model):
-    """
-    Run a series of cross_validation/training splits and plot the 
-    resulting AUC score
-    
-    INPUT:
-        X: Predictors Matrix
-        y: Target Vetor
-        estimator: sklearn predictor object with fit and predict methods
-    """
-    from sklearn.model_selection import learning_curve
-    import matplotlib.pyplot as plt
-    
-    num_samples = 5
-
-    train_sizes, train_scores, test_scores = learning_curve(
-        model
-        , X.iloc[X.sample(frac=1, random_state = 42).index]
-        , y.iloc[X.sample(frac=1, random_state = 42).index]
-        , cv = 3
-        , scoring = 'roc_auc'
-        , train_sizes=np.linspace(0.1, 1.0, num_samples)
-        , verbose = 4
-        , n_jobs= -1
-        )
-
-    train_scores_mean = np.mean(train_scores, axis=1)
-    cv_scores_mean = np.mean(test_scores, axis=1)
-    print("AUC train = {}".format(train_scores_mean[-1].round(2)))
-    print("AUC cv = {}".format(cv_scores_mean[-1].round(2)))
-
-
-    plt.plot(np.linspace(0.1, 1.0, num_samples)*100, train_scores_mean,
-             label="Training score")
-    plt.plot(np.linspace(0.1, 1.0, num_samples)*100, cv_scores_mean,
-             label="Cross-validation score")
-
-    plt.title("Learning Curves")
-    plt.xlabel("% of training set")
-    plt.ylabel("AUC")
-
-    plt.legend(loc="best")
-    print("")
-    plt.show()
-
 def plot_learning_curve(estimator, title, X, y, axes=None, ylim=None, cv=None,
                         n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5),
                         verbose=0):
