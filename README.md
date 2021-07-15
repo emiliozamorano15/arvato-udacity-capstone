@@ -14,7 +14,7 @@
 
 ## 1. Overview <a id='overview'></a>
 
-In this project, you will analyze demographics data for customers of a mail-order sales company in Germany, comparing it against demographics information for the general population. You'll use unsupervised learning techniques to perform customer segmentation, identifying the parts of the population that best describe the core customer base of the company. Then, you'll apply what you've learned on a third dataset with demographics information for targets of a marketing campaign for the company, and use a model to predict which individuals are most likely to convert into becoming customers for the company. The data that you will use has been provided by our partners at Bertelsmann Arvato Analytics, and represents a real-life data science task.
+This project corresponds to the final assignment of Udacity’s Data Scientist Nanodegree program. This is a joint project with Bertelsmann Arvato Analytics, who provide the data used and represents a real-life data science task. The goal of this project is many-fold: first, it consists on analyzing demographics data for customers of a mail-order sales company in Germany, which can be then compared it against a general population. One approach for this is to apply unsupervised learning techniques to perform customer segmentation. Second, another goal is to develop a supervised model to predict customers responses for a mailing campaign. Third, the resulting model is to be used to predict a test dataset from a Kaggle competition and to compare its performance against other students.
 
 ## 2. File Structure <a id='files'></a>
 
@@ -50,6 +50,8 @@ As for possible improvements on the previously described approach we note the fo
 * Further exploration on data reduction could be possible. In this case the number of features is still high and some further analyses on this regard might be necessary. Alternatively, there is the possibility of applying feature selection techniques to reduce furthermore the number of features.
 * Class imbalance was addressed by using an oversampling approach with synthetic values (i.e. SMOTE). Alternate over- and undersampling approaches need to be evaluated to determine the best option to address this issue.
 * Regarding the algorithm selection, alternative algorithms need to be evaluated as, e.g., SVM, XGBoost, etc.
+
+This report is documented and publish in the following [Medium post](https://emiliozamoranodeacha.medium.com/customer-segmentation-report-for-arvato-financial-services-49a7f83da333)
 
 ## 3. Credits and Acknowledgements <a id='creadits'></a>
 
